@@ -12,25 +12,27 @@ class BookTestCase(unittest.TestCase):
 
     def setUp(self):
         """Define test variables and initialize app."""
-        self.app = create_app()
-        self.client = self.app.test_client
         self.database_name = "bookshelf_test"
         self.database_path = "postgresql://{}:{}@{}/{}".format(
             "student", "student", "localhost:5432", self.database_name
         )
-        setup_db(self.app, self.database_path)
+        self.app = create_app(self.database_path)
+        self.client = self.app.test_client
 
-        self.new_book = {"title": "Anansi Boys", "author": "Neil Gaiman", "rating": 5}
+        # setup_db(self.app, self.database_path)
+
+        self.new_book = {"title": "Anansi Boys",
+                         "author": "Neil Gaiman", "rating": 5}
 
         # binds the app to the current context
-        with self.app.app_context():
-            self.db = SQLAlchemy()
-            self.db.init_app(self.app)
-            # create all tables
-            self.db.create_all()
+        # with self.app.app_context():
+        #     # self.db = SQLAlchemy()
+        #     self.db.init_app(self.app)
+        #     # create all tables
+        #     self.db.create_all()
 
     def tearDown(self):
-        """Executed after reach test"""
+        """Executed after each test"""
         pass
 
 
@@ -39,6 +41,15 @@ class BookTestCase(unittest.TestCase):
 #        Such as adding a book without a rating, etc.
 #        Since there are four routes currently, you should have at least eight tests.
 # Optional: Update the book information in setUp to make the test database your own!
+
+
+    def test_retrieve_books(self):
+        """Test retrieve books """
+        res = self.client().get('http://localhost:5000/books?page=1')
+        print(res)
+        self.assertEqual(res.status_code, 200)
+
+        # self.assertEqual(res)
 
 
 # Make the tests conveniently executable
