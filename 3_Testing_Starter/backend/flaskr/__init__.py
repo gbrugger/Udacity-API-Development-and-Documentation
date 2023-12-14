@@ -77,7 +77,7 @@ def create_app(db_URI="", test_config=None):
                 }
             )
 
-        except:
+        except Exception as e:
             abort(400)
 
     @app.route("/books/<int:book_id>", methods=["DELETE"])
@@ -137,6 +137,14 @@ def create_app(db_URI="", test_config=None):
             jsonify({"success": False, "error": 404,
                     "message": "resource not found"}),
             404,
+        )
+
+    @app.errorhandler(405)
+    def not_allowed(error):
+        return (
+            jsonify({"success": False, "error": 405,
+                    "message": "method not allowed"}),
+            405,
         )
 
     @app.errorhandler(422)
